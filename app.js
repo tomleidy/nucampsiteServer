@@ -8,8 +8,10 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+// process.env.SECRET_URL
 
-const url = 'mongodb://localhost:27017/nucampsite';
+const url = process.env.SECRET_URL;
 const connect = mongoose.connect(url, {
     useCreateIndex: true,
     useFindAndModify: false,
