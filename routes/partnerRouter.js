@@ -1,40 +1,80 @@
 const express = require('express');
+const Partner = require('../models/partner')
+
 const partnerRouter = express.Router();
 
+// This is definitely cleaner to look at.
+
 partnerRouter.route('/')
-    .all((req, res, next) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        next();
+    .get(async (req, res, next) => {
+        try {
+            const partners = await Partner.find()
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(partners);
+        }
+        catch (err) {
+            next(err);
+        }
     })
-    .get((req, res) => {
-        res.end('Will send all the partners to you');
-    })
-    .post((req, res) => {
-        res.end(`Will add the partner: ${req.body.name} with description: ${req.body.description}`);
+    .post(async (req, res, next) => {
+        try {
+            const partner = await Partner.create(req.body)
+            console.log('Partner Created ', partner);
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(partner);
+        }
+        catch (err) { next(err); }
     })
     .put((req, res) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /partners');
     })
-    .delete((req, res) => {
-        res.end('Deleting all partners');
+    .delete(async (req, res, next) => {
+        try {
+            const response = await Partner.deleteMany()
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(response);
+        }
+        catch (err) { next(err); }
     })
 
 partnerRouter.route('/:partnerId')
-    .get((req, res) => {
-        res.end(`Will send details of the partner: ${req.params.partnerId} to you`);
+    .get(async (req, res, next) => {
+        try {
+            const partner = await Partner.findById(req.params.partnerId)
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(partner);
+        }
+        catch (err) { next(err); }
     })
     .post((req, res) => {
         res.statusCode = 403;
         res.end(`POST operation not supported on /partners/${req.params.partnerId}`);
     })
-    .put((req, res) => {
-        res.write(`Updating the partner: ${req.params.partnerId}\n`);
-        res.end(`Will update the partner: ${req.params.partnerId}
-    with description: ${req.body.description}`);
+    .put(async (req, res, next) => {
+        try {
+            const partner = await Partner.findByIdAndUpdate(req.params.partnerId, { $set: req.body }, { new: true })
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(partner);
+        }
+        catch (err) { next(err); }
     })
-    .delete((req, res) => {
-        res.end(`Deleting partner: ${req.params.partnerId}`);
+    .delete(async (req, res, next) => {
+        try {
+            const response = await Partner.findByIdAndDelete(req.params.partnerId)
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(response);
+        }
+        catch (err) {
+            next(err);
+        }
     })
+
+
 module.exports = partnerRouter;
