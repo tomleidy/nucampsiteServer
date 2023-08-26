@@ -5,6 +5,8 @@ var path = require('path');
 var logger = require('morgan');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const passport = require('passport');
+const authenticate = require('./authenticate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -54,17 +56,16 @@ const authenticationError = (req, res, next) => {
 }
 
 function auth(req, res, next) {
-    console.log(req.session);
-    if (!req.session.user) {
+    console.log(req.user);
+    if (!req.user) {
         return authenticationError(req, res, next);
     } else {
-        if (req.session.user === 'authenticated') {
-            return next();
-        } else {
-            return authenticationError(req, res, next);
-        }
+        return next();
     }
 }
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
