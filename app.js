@@ -1,21 +1,16 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-//var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const session = require('express-session');
-const FileStore = require('session-file-store')(session);
+const config = require('./config');
 const passport = require('passport');
-const authenticate = require('./authenticate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();
-// process.env.SECRET_URL
 
-const url = process.env.SECRET_URL;
+const url = config.mongoUrl;
 const connect = mongoose.connect(url, {
     useCreateIndex: true,
     useFindAndModify: false,
@@ -38,41 +33,13 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser("867-5309867-5310867-5311867-5313"));
-
-app.use(session({
-    name: 'session-id',
-    secret: "867-5309867-5310867-5311867-5313",
-    saveUninitialized: false,
-    resave: false,
-    store: new FileStore({ path: path.join(__dirname, 'sessions') })
-
-}))
-
-const authenticationError = (req, res, next) => {
-    const err = new Error('You are not authenticated!');
-    err.status = 401;
-    return next(err);
-}
-
-function auth(req, res, next) {
-    console.log(req.user);
-    if (!req.user) {
-        return authenticationError(req, res, next);
-    } else {
-        return next();
-    }
-}
 
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-// Why is she saying move it above the auth function? I'm going to find out the hard way.
-
-
-app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
 
 const campsiteRouter = require('./routes/campsiteRouter');
