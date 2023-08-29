@@ -1,6 +1,6 @@
 const express = require('express');
 const Partner = require('../models/partner')
-const authenticate = require('../authenticate')
+const { verifyUser, verifyAdmin } = require('../authenticate')
 
 const partnerRouter = express.Router();
 
@@ -18,7 +18,7 @@ partnerRouter.route('/')
             next(err);
         }
     })
-    .post(authenticate.verifyUser, async (req, res, next) => {
+    .post(verifyUser, verifyAdmin, async (req, res, next) => {
         try {
             const partner = await Partner.create(req.body)
             console.log('Partner Created ', partner);
@@ -28,11 +28,11 @@ partnerRouter.route('/')
         }
         catch (err) { next(err); }
     })
-    .put(authenticate.verifyUser, (req, res) => {
+    .put(verifyUser, (req, res) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /partners');
     })
-    .delete(authenticate.verifyUser, async (req, res, next) => {
+    .delete(verifyUser, verifyAdmin, async (req, res, next) => {
         try {
             const response = await Partner.deleteMany()
             res.statusCode = 200;
@@ -52,11 +52,11 @@ partnerRouter.route('/:partnerId')
         }
         catch (err) { next(err); }
     })
-    .post(authenticate.verifyUser, (req, res) => {
+    .post(verifyUser, (req, res) => {
         res.statusCode = 403;
         res.end(`POST operation not supported on /partners/${req.params.partnerId}`);
     })
-    .put(async (req, res, next) => {
+    .put(verifyUser, verifyAdmin, async (req, res, next) => {
         try {
             const partner = await Partner.findByIdAndUpdate(req.params.partnerId, { $set: req.body }, { new: true })
             res.statusCode = 200;
@@ -65,7 +65,7 @@ partnerRouter.route('/:partnerId')
         }
         catch (err) { next(err); }
     })
-    .delete(authenticate.verifyUser, async (req, res, next) => {
+    .delete(verifyUser, verifyAdmin, async (req, res, next) => {
         try {
             const response = await Partner.findByIdAndDelete(req.params.partnerId)
             res.statusCode = 200;

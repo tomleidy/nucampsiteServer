@@ -4,7 +4,8 @@
     "private": true,
     "scripts": {
         "start": "nodemon --ignore sessions/ ./bin/www",
-        "test": "cross-env NODE_ENV=test mocha test/*.test.js"
+        "test": "cross-env NODE_ENV=test mocha test/*.test.js",
+        "debug": "cross-env mocha test/*.test.js"
     },
     "dependencies": {
         "chai": "^4.3.8",

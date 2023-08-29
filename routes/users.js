@@ -2,12 +2,20 @@ const express = require('express');
 const User = require('../models/user');
 const passport = require('passport');
 const authenticate = require('../authenticate');
+const { verifyUser, verifyAdmin } = authenticate;
 
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-    res.send('respond with a resource');
+router.get('/', verifyUser, verifyAdmin, async (req, res, next) => {
+    try {
+        const users = await User.find({})
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(users);
+    }
+    catch (err) { return next(err) }
+
 });
 
 router.post('/signup', (req, res) => {
@@ -62,16 +70,10 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 
-router.get('/logout', (req, res, next) => {
-    if (req.session) {
-        res.clearCookie('session-id');
-        req.session.destroy();
+router.get('/logout', verifyUser, (req, res, next) => {
+    if (req.user) {
+        req.logout();
         res.redirect('/');
-
-        // This is throwing up session-files-store errors.
-        // I'd prefer to fix it. Errors are in the form of:
-        // [session-file-store] will retry, error on last attempt: Error: ENOENT: no such file or directory, open 'path/sessions/session.json'
-
     } else {
         const err = new Error('You are not logged in!');
         err.status = 401;
@@ -80,3 +82,7 @@ router.get('/logout', (req, res, next) => {
 })
 
 module.exports = router;
+
+        // This is throwing up session-files-store errors.
+        // I'd prefer to fix it. Errors are in the form of:
+        // [session-file-store] will retry, error on last attempt: Error: ENOENT: no such file or directory, open 'path/sessions/session.json'
