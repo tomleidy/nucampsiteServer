@@ -23,7 +23,9 @@ campsiteRouter.route('/')
     .post(verifyUser, verifyAdmin, (req, res, next) => {
         Campsite.create(req.body)
             .then(campsite => {
-                console.log('Campsite Created ', campsite);
+                if (process.env.NODE_ENV !== 'test') {
+                    console.log('Campsite Created ', campsite);
+                }
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(campsite);
@@ -218,7 +220,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
         Campsite.findById(req.params.campsiteId)
             .then(campsite => {
                 if (campsite && campsite.comments.id(req.params.commentId)) {
-                    if (campsite.comments.id(req.params.commentId).author.equals(req.user._id)) {
+                    if (req.user.admin || campsite.comments.id(req.params.commentId).author.equals(req.user._id)) {
                         campsite.comments.id(req.params.commentId).remove();
                         campsite.save()
                             .then(campsite => {
