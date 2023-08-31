@@ -176,7 +176,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
 
     })
     .post(verifyUser, (req, res, next) => {
-        req.statusCode = 403;
+        res.statusCode = 403;
         res.end(`POST operation not supported on /campsites/${req.params.campsiteId}/comments/`);
     })
     .put(verifyUser, (req, res, next) => {
