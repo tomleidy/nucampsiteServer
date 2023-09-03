@@ -3,7 +3,6 @@ const chai = require('chai');
 const expect = chai.expect;
 const app = require('../app');
 const request = supertest(app);
-const mongoose = require('mongoose');
 const { postCampsite, postComment, fakeCampsite, fakeComment } = require('./utilities');
 const { logins, tokens, posts } = require('./identification');
 
@@ -31,6 +30,12 @@ describe('POST endpoints', () => {
                 .expect(401)
                 .end(done)
         })
+        it('POST /imageUpload should return 401 when unauthorized', function (done) {
+            request.post('/imageUpload')
+                .expect(401)
+                .end(done);
+        });
+
     })
     describe('User', () => {
         it('POST /campsites should return 403 when user', done => {
@@ -47,6 +52,16 @@ describe('POST endpoints', () => {
                 .expect(403)
                 .end(done)
         })
+        it('POST /imageUpload should return 403 for user1', function (done) {
+            request
+                .post('/imageUpload')
+                .set('Authorization', `Bearer ${tokens.user1}`)
+                .attach('imageFile', __dirname + '/sample-image.jpg')
+                .expect(403)
+                .end(done);
+        });
+
+
     })
     describe('Admin', () => {
 
@@ -80,12 +95,27 @@ describe('POST endpoints', () => {
                 .send(fakeComment())
                 .expect(200)
                 .end((err, res) => {
-                    if (err) done(err)
+                    if (err) return done(err)
                     expect(res.body).to.have.property('_id')
                     done();
                 })
         })
     })
-
+    it('POST /imageUpload should return 200 and appropriate JSON response for admin', function (done) {
+        request
+            .post('/imageUpload')
+            .set('Authorization', `Bearer ${tokens.admin}`)
+            .attach('imageFile', __dirname + '/sample-image.jpg')
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .end(
+                (err, res) => {
+                    if (err) return done(err);
+                    expect(res.body).to.have.property('filename');
+                    expect(res.body).to.have.property('size');
+                    expect(res.body).to.have.property('path');
+                    done();
+                });
+    });
 
 })

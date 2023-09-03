@@ -3,6 +3,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const app = require('../app');
 const request = supertest(app);
+
 const mongoose = require('mongoose');
 const { postCampsite, postComment, fakeCampsite, fakeComment, loginUser1, loginUser2, loginAdmin } = require('./utilities');
 const { logins, tokens, posts } = require('./identification');
@@ -46,6 +47,12 @@ describe('GET endpoints', function () {
                     done();
                 });
         })
+        it('GET /imageUpload should return 401 when unauthorized', function (done) {
+            request.get('/imageUpload')
+                .expect(401)
+                .end(done);
+        });
+
     })
     describe('User', () => {
 

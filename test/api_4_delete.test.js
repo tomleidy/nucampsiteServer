@@ -24,6 +24,11 @@ describe("DELETE endpoints", function () {
                 .expect(401)
                 .end(done)
         })
+        it('DELETE /imageUpload should return 401 when unauthorized', function (done) {
+            request.delete('/imageUpload')
+                .expect(401)
+                .end(done);
+        });
     })
     describe('User', () => {
         it('DELETE /campsites should return 403 when user', done => {
@@ -63,6 +68,16 @@ describe("DELETE endpoints", function () {
                     return deleteComment(done);
                 })
         })
+        it('DELETE /imageUpload should return 403 for user', function (done) {
+            request
+                .delete('/imageUpload')
+                .set('Authorization', `Bearer ${tokens.user1}`)
+                .expect(403)
+                .end(done);
+        });
+
+
+
     })
 
 
@@ -112,5 +127,15 @@ describe("DELETE endpoints", function () {
                     return deleteCampsite(done);
                 })
         })
+
+
     })
+    it('DELETE /imageUpload should return 403 for admin', function (done) {
+        request
+            .delete('/imageUpload')
+            .set('Authorization', `Bearer ${tokens.admin}`)
+            .expect(403)
+            .end(done);
+    });
+
 })

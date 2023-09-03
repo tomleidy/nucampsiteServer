@@ -23,6 +23,8 @@ const fakeComment = () => ({ rating: randomRating(), text: timeString() })
 const postCampsite = (done) => {
     if (posts.campsiteId) return done(new Error("posts.campsiteId already exists"));
     request.post(`/campsites`)
+        .trustLocalhost()
+        .redirects(1)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send(fakeCampsite())
         .expect(200)
@@ -38,6 +40,8 @@ const postComment = (done, token = tokens.user2) => {
     if (posts.commentId) return done()
     if (!posts.campsiteId) before(postCampsite);
     request.post(`/campsites/${posts.campsiteId}/comments`)
+        .trustLocalhost()
+        .redirects(1)
         .set('Authorization', `Bearer ${token}`)
         .send(fakeComment())
         .expect(200)
@@ -63,6 +67,8 @@ const deleteCampsite = (done) => {
 
 const loginUser1 = (done) => {
     request.post('/users/login')
+        .trustLocalhost()
+        .redirects(1)
         .send(logins.user1)
         .expect(200)
         .expect('Content-Type', /json/)
@@ -76,6 +82,8 @@ const loginUser1 = (done) => {
 
 const loginUser2 = (done) => {
     request.post('/users/login')
+        .trustLocalhost()
+        .redirects(1)
         .send(logins.user2)
         .expect(200)
         .expect('Content-Type', /json/)
@@ -88,6 +96,8 @@ const loginUser2 = (done) => {
 }
 const loginAdmin = (done) => {
     request.post('/users/login')
+        .trustLocalhost()
+        .redirects(1)
         .send(logins.admin)
         .expect(200)
         .expect('Content-Type', /json/)

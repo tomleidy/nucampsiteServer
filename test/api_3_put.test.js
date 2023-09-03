@@ -3,7 +3,6 @@ const chai = require('chai');
 const expect = chai.expect;
 const app = require('../app');
 const request = supertest(app);
-const mongoose = require('mongoose');
 const { postCampsite, postComment, fakeCampsite, fakeComment } = require('./utilities');
 const { logins, tokens, posts } = require('./identification');
 
@@ -32,6 +31,11 @@ describe('PUT endpoints', function () {
                 .expect(401)
                 .end(done)
         })
+        it('PUT /imageUpload should return 401 when unauthorized', function (done) {
+            request.put('/imageUpload')
+                .expect(401)
+                .end(done);
+        });
     })
     describe('User', () => {
         it('PUT /campsites should return 403 when user', done => {
@@ -57,6 +61,14 @@ describe('PUT endpoints', function () {
                 .expect(403)
                 .end(done)
         })
+        it('PUT /imageUpload should return 403 for user', function (done) {
+            request
+                .put('/imageUpload')
+                .set('Authorization', `Bearer ${tokens.user1}`)
+                .attach('imageFile', __dirname + '/sample-image.jpg')
+                .expect(403)
+                .end(done);
+        });
     })
     describe('Admin', () => {
         it(`PUT /campsites/campsiteId/comments/commentId should return 403 when admin`, done => {
@@ -80,5 +92,15 @@ describe('PUT endpoints', function () {
                 .expect(403)
                 .end(done)
         })
+
+        it('PUT /imageUpload should return 403 for admin', function (done) {
+            request
+                .put('/imageUpload')
+                .set('Authorization', `Bearer ${tokens.admin}`)
+                .attach('imageFile', __dirname + '/sample-image.jpg')
+                .expect(403)
+                .end(done);
+        });
+
     })
 })
