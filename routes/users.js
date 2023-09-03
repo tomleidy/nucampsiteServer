@@ -66,7 +66,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.json({ success: true, token: token, status: 'You are succssfully logged in!' });
+    res.json({ success: true, token: token, status: 'You are successfully logged in!' });
 });
 
 
@@ -82,7 +82,3 @@ router.get('/logout', verifyUser, (req, res, next) => {
 })
 
 module.exports = router;
-
-        // This is throwing up session-files-store errors.
-        // I'd prefer to fix it. Errors are in the form of:
-        // [session-file-store] will retry, error on last attempt: Error: ENOENT: no such file or directory, open 'path/sessions/session.json'
