@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "start": "nodemon --ignore sessions/ ./bin/www",
+        "pretest": "rm -f public/images/sample-image.jpg",
         "test": "cross-env NODE_ENV=test mocha test/*.test.js",
         "debug": "cross-env mocha test/debug.js"
     },
