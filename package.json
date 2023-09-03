@@ -5,7 +5,7 @@
     "scripts": {
         "start": "nodemon --ignore sessions/ ./bin/www",
         "test": "cross-env NODE_ENV=test mocha test/*.test.js",
-        "debug": "cross-env mocha test/*.test.js"
+        "debug": "cross-env mocha test/debug.js"
     },
     "dependencies": {
         "chai": "^4.3.8",
@@ -21,6 +21,7 @@
         "mongoose": "^5.10.9",
         "mongoose-currency": "^0.2.0",
         "morgan": "~1.9.1",
+        "multer": "^1.4.2",
         "nodemon": "^3.0.1",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",

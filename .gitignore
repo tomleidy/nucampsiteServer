@@ -4,3 +4,4 @@ node_modules
 sessions
 bin/server.cert
 bin/server.key
+public/images/sample-image.jpg
