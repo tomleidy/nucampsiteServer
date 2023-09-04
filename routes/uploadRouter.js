@@ -1,6 +1,7 @@
 const express = require('express');
 const authenticate = require('../authenticate');
 const multer = require('multer');
+const cors = require('./cors');
 
 const uploadRouter = express.Router();
 
@@ -24,20 +25,21 @@ const imageFileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: imageFileFilter });
 
 uploadRouter.route('/')
-    .get(verifyUser, verifyAdmin, (req, res) => {
+    .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+    .get(cors.cors, verifyUser, verifyAdmin, (req, res) => {
         res.statusCode = 403;
         res.end('GET operation not supported on /imageUpload');
     })
-    .post(verifyUser, verifyAdmin, upload.single('imageFile'), (req, res) => {
+    .post(cors.corsWithOptions, verifyUser, verifyAdmin, upload.single('imageFile'), (req, res) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(req.file);
     })
-    .put(verifyUser, verifyAdmin, (req, res) => {
+    .put(cors.corsWithOptions, verifyUser, verifyAdmin, (req, res) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /imageUpload');
     })
-    .delete(verifyUser, verifyAdmin, (req, res) => {
+    .delete(cors.corsWithOptions, verifyUser, verifyAdmin, (req, res) => {
         res.statusCode = 403;
         res.end('DELETE operation not supported on /imageUpload');
     })
