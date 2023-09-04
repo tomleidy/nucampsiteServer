@@ -3,11 +3,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const app = require('../app');
 const request = supertest(app);
+chai.should();
+
 
 const mongoose = require('mongoose');
 const { postCampsite, postComment, fakeCampsite, fakeComment, loginUser1, loginUser2, loginAdmin } = require('./utilities');
 const { logins, tokens, posts } = require('./identification');
 
+// Still need to add 404 tests
 
 describe('GET endpoints', function () {
     describe('Unauthorized', () => {
@@ -120,5 +123,31 @@ describe('GET endpoints', function () {
                 });
 
         });
+    })
+
+    describe('CORS', () => {
+        it(`GET /campsites with origin in accept list should return access-control-allow headers`, done => {
+            request.get('/campsites')
+                .set('Origin', 'https://localhost:3443')
+                .end((err, res) => {
+                    console.log(res.headers);
+                    if (err) return done(err);
+                    res.headers.should.have.property('access-control-allow-origin');
+                    expect(res.headers['access-control-allow-origin']).to.deep.equal("*");
+                    //res.headers.should.have.property('access-control-allow-methods');
+                    done();
+                })
+        })
+        it(`POST /campsites with origin not in accept list should not return access-control-allow headers`, done => {
+            request.get('/campsites')
+                .set('Origin', 'https://notwhitelisted:3443')
+                .end((err, res) => {
+                    console.log(res.headers);
+                    if (err) return done(err);
+                    res.headers.should.not.have.property('access-control-allow-origin');
+                    res.headers.should.not.have.property('access-control-allow-methods');
+                    done();
+                })
+        })
     })
 })

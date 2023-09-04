@@ -14,17 +14,14 @@ const testUserSignup = {
     lastname: "user"
 }
 
-app.set('port', 3000)
-app.set('secPort', 3000 + 443)
-
 
 // This seems faster than Postman to run every time, but now I need to go through and create tests for everything. Also I'm learning that Express responds to some of these with a 401 instead of a 403, and I'm not sure how to modify that. Or if I even want to.
 
 
 
+before(function (done) { this.timeout(10000); mongoose.connection.once('open', done); });
 describe('API tests', function () {
-    before(function (done) { this.timeout(10000); mongoose.connection.once('open', done); });
-    //before(loginUser1)
+    before(loginUser1)
     before(loginUser2)
     before(loginAdmin)
     before(postCampsite);
