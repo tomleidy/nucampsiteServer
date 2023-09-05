@@ -19,8 +19,9 @@ const testUserSignup = {
 
 
 
-before(function (done) { this.timeout(10000); mongoose.connection.once('open', done); });
 describe('API tests', function () {
+    // this needs a really long timeout on my mac, I don't know why.
+    before(function (done) { this.timeout(15000); mongoose.connection.once('open', done); });
     before(loginUser1)
     before(loginUser2)
     before(loginAdmin)
