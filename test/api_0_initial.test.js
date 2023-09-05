@@ -7,13 +7,6 @@ const mongoose = require('mongoose');
 const { postCampsite, postComment, loginUser1, loginUser2, loginAdmin } = require('./utilities');
 const { logins, tokens, posts } = require('./identification');
 
-const testUserSignup = {
-    username: logins.user1.username,
-    password: logins.user1.password,
-    firstname: "test",
-    lastname: "user"
-}
-
 
 // This seems faster than Postman to run every time, but now I need to go through and create tests for everything. Also I'm learning that Express responds to some of these with a 401 instead of a 403, and I'm not sure how to modify that. Or if I even want to.
 

@@ -1,16 +1,17 @@
-
+const config = require('../config');
 
 
 const logins = {
-    user1: { username: "testuser5", password: "password" },
-    user2: { username: "testuser4", password: "password" },
-    admin: { username: "admin", password: "password" }
+    user1: config.testUser1,
+    user2: config.testUser2,
+    admin: config.testAdmin
 }
 const tokens = {
     user1: "",
     user2: "",
     admin: ""
 }
+
 
 const posts = {
     campsiteId: "",
