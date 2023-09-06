@@ -14,7 +14,7 @@ passport.deserializeUser(User.deserializeUser());
 
 
 exports.getToken = user => {
-    return jwt.sign(user, config.secretKey, { expiresIn: 3600 });
+    return jwt.sign(user, config.secretKey, { expiresIn: 43200 });
 }
 
 const opts = {};
@@ -44,9 +44,6 @@ const authenticateAdmin = (req, res, next) => {
     return next(err);
 }
 
-exports.verifyAdmin = authenticateAdmin;
-
-exports.verifyUser = passport.authenticate('jwt', { session: false });
 
 exports.facebookPassport = passport.use(new FacebookTokenStrategy({
     clientID: config.facebook.clientId,
@@ -70,3 +67,7 @@ exports.facebookPassport = passport.use(new FacebookTokenStrategy({
         )
     }
 ))
+
+exports.verifyAdmin = authenticateAdmin;
+
+exports.verifyUser = passport.authenticate('jwt', { session: false });

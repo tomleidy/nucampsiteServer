@@ -13,6 +13,7 @@ const promotionRouter = require('./routes/promotionRouter');
 const uploadRouter = require('./routes/uploadRouter');
 
 const mongoose = require('mongoose');
+const favoriteRouter = require('./routes/favoriteRouter');
 
 const url = config.mongoUrl;
 const connect = mongoose.connect(url, {
@@ -59,6 +60,7 @@ app.use('/campsites', campsiteRouter);
 app.use('/partners', partnerRouter);
 app.use('/promotions', promotionRouter);
 app.use('/imageUpload/', uploadRouter);
+app.use('/favorites', favoriteRouter);
 
 app.use('/', indexRouter);
 app.use(express.static(path.join(__dirname, 'public')));
